@@ -38,7 +38,34 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   } );
   
 
+// My new Endpoint
+app.get("/filteredimage",async (req:Request, res: Response) => {
+  // checking the url to find if it exist
+ try{
 
+  const image_url = req.query.image_url;
+
+  // validating and checking errors
+  if ( !image_url){
+    return res.status(400).send("URL needed!");
+    
+  }
+
+  const filteredpath =  await filterImageFromURL(image_url)
+    res.sendFile(filteredpath, (err: Error, data: any) =>{
+      deleteLocalFiles(new Array(filteredpath));
+
+      // checking error on endpoint
+      if (err){
+        res.status(500).send("Error whilst sending the file");
+      }
+    }) 
+    
+ } catch (error){
+    res.status(500).send("Error message!");
+ }
+  
+});
 
 
   // Start the Server
